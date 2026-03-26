@@ -2,6 +2,18 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents a user of the Patient Management System.
+ * A user can be either a patient or a doctor.
+ *
+ * Doctors have additional professional information such as university,
+ * register number, graduation year, and qualification.
+ * Patients can have a birth date used to calculate their age.
+ *
+ * @author Martina Molteni
+ * @version 1.0
+ */
+
 public class Users {
 
     private String name;
@@ -14,7 +26,7 @@ public class Users {
     private String province;
     private String role; // "patient" or "doctor"
     private String taxID;
-    private String birthDate;
+    private LocalDate birthDate;
 
     // Doctor-only fields
     private String university;
@@ -23,6 +35,24 @@ public class Users {
     private String qualification;
 
     // doctor's constructor
+    /**
+     * Constructs a new doctor user with all required information.
+     *
+     * @param name the user's first name
+     * @param lastName the user's last name
+     * @param email the user's email address
+     * @param password the user's password
+     * @param phoneNumber the user's phone number
+     * @param address the user's address
+     * @param city the user's city
+     * @param province the user's province
+     * @param role the role of the user (doctor)
+     * @param taxID the user's tax identification code
+     * @param university the university attended by the doctor
+     * @param registerNumber the doctor's register number
+     * @param graduationYear the year of graduation
+     * @param qualification the doctor's qualification
+     */
     public Users(String name, String lastName, String email, String password,
                  String phoneNumber, String address, String city, String province,
                  String role, String taxID,
@@ -47,6 +77,20 @@ public class Users {
     }
 
     // patient's constructor
+    /**
+     * Constructs a new patient user.
+     *
+     * @param name the user's first name
+     * @param lastName the user's last name
+     * @param email the user's email address
+     * @param password the user's password
+     * @param phoneNumber the user's phone number
+     * @param address the user's address
+     * @param city the user's city
+     * @param province the user's province
+     * @param role the role of the user (patient)
+     * @param taxID the user's tax identification code
+     */
     public Users(String name, String lastName, String email, String password,
                  String phoneNumber, String address, String city, String province,
                  String role, String taxID) {
@@ -113,9 +157,22 @@ public class Users {
         this.province = province;
     }
 
+    /**
+     * Returns the role of the user.
+     *
+     * @return the role (patient or doctor)
+     */
+
     public String getRole() {
         return role;
     }
+
+    /**
+     * Sets the role of the user.
+     *
+     * @param role the role to set (patient or doctor)
+     */
+
     public void setRole(String role) {
         this.role = role;
     }
@@ -162,13 +219,16 @@ public class Users {
         this.qualification = qualification;
     }
 
-    // age calculation
+    /**
+     * Calculates the age of the user if the user is a patient.
+     *
+     * @return the age in years, or -1 if the user is not a patient or birth date is not set
+     */
 
     public int getAge() {
         if (!role.equalsIgnoreCase("patient") || birthDate == null) {
             return -1;
         }
         return Period.between(birthDate, LocalDate.now()).getYears();
-    }
     }
 }
