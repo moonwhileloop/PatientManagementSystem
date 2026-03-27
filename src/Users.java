@@ -225,10 +225,11 @@ public class Users {
      * @return the age in years, or -1 if the user is not a patient or birth date is not set
      */
 
-    public int getAge() {
+    public Integer getAge() {
         if (!role.equalsIgnoreCase("patient") || birthDate == null) {
-            return -1;
+            return null;
         }
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
+
 }
