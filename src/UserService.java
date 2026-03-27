@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 /**
  * Service class responsible for handling user-related operations
  * such as user registration and input validation.
@@ -43,8 +45,13 @@ public class UserService {
         System.out.print("Email: ");
         String email = scanner.nextLine();
 
+        if (FileManager.emailExists(email)) {
+            System.out.println("Email already registered!");
+            return;
+        }
+
         System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String password = hashPassword(scanner.nextLine());
 
         System.out.print("Phone number: ");
         String phone = scanner.nextLine();
@@ -115,15 +122,34 @@ public class UserService {
 
         user.setBirthDate(birthDate);
 
-        // stampa per test
+        user.setBirthDate(birthDate);
+
+// salva su file
+        String line = user.getName() + "," +
+                user.getLastName() + "," +
+                user.getEmail() + "," +
+                user.getPassword() + "," +
+                user.getPhoneNumber() + "," +
+                user.getAddress() + "," +
+                user.getCity() + "," +
+                user.getProvince() + "," +
+                user.getRole() + "," +
+                user.getTaxID();
+
+        FileManager.saveUser(line);
+
+// stampa per test
         System.out.println("\nSuccessfully registered user!");
         System.out.println("Nome: " + user.getName());
         System.out.println("Ruolo: " + user.getRole());
+
         if (user.getRole().equalsIgnoreCase("patient")) {
             System.out.println("Age: " + user.getAge());
-        }else if (user.getRole().equalsIgnoreCase("doctor")) {
+        } else if (user.getRole().equalsIgnoreCase("doctor")) {
             System.out.println("Qualification: " + user.getQualification());
         }
+
+
     }
     /**
      * Parses a string representing a birth date into a {@link LocalDate}.
@@ -142,4 +168,91 @@ public class UserService {
             return null;
         }
     }
+
+    /**
+     * Handles the user login process by validating email and password.
+     * <p>
+     * The method prompts the user to enter their email and password,
+     * hashes the password using SHA-256, and checks the credentials
+     * against the stored data via {@link FileManager#login(String, String)}.
+     * </p>
+     *
+     * <p>
+     * If the credentials are valid, the user is logged in and a message is displayed.
+     * Depending on the user's role (doctor or patient), the method simulates
+     * a redirect to the appropriate dashboard.
+     * </p>
+     *
+     * <p>
+     * If the credentials are invalid, an error message is displayed.
+     * </p>
+     *
+     * @param scanner the Scanner object used to read user input from the console
+     */
+
+    public static void loginUser(Scanner scanner) {
+
+        System.out.println("\n=== LOGIN ===");
+
+        System.out.print("Email: ");
+        String email = scanner.nextLine();
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        // hash della password inserita
+        String hashedPassword = hashPassword(password);
+
+        Users user = FileManager.login(email, hashedPassword);
+
+        if (user != null) {
+            System.out.println("Login successful!");
+            System.out.println("Welcome " + user.getName());
+
+            if (user.getRole().equalsIgnoreCase("doctor")) {
+                System.out.println("Redirecting to doctor dashboard...");
+            } else {
+                System.out.println("Redirecting to patient dashboard...");
+            }
+
+        } else {
+            System.out.println("Invalid email or password.");
+        }
+    }
+
+    /**
+     * Hashes a plain text password using the SHA-256 algorithm.
+     * <p>
+     * This method converts the input password into a fixed-length hexadecimal
+     * string using a cryptographic hash function. The same input will always
+     * produce the same output, but the original password cannot be easily retrieved.
+     * </p>
+     *
+     * @param password the plain text password to hash
+     * @return the hashed password as a hexadecimal string
+     * @throws RuntimeException if the SHA-256 algorithm is not available
+     */
+
+    public static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+
+            StringBuilder hexString = new StringBuilder();
+
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
+
