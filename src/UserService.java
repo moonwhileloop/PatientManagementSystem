@@ -122,23 +122,36 @@ public class UserService {
 
         user.setBirthDate(birthDate);
 
-        user.setBirthDate(birthDate);
 
-// salva su file
-        String line = user.getName() + "," +
-                user.getLastName() + "," +
-                user.getEmail() + "," +
-                user.getPassword() + "," +
-                user.getPhoneNumber() + "," +
-                user.getAddress() + "," +
-                user.getCity() + "," +
-                user.getProvince() + "," +
-                user.getRole() + "," +
-                user.getTaxID();
 
-        FileManager.saveUser(line);
+// save on file
+        StringBuilder line = new StringBuilder();
 
-// stampa per test
+        line.append(user.getName()).append(",");
+        line.append(user.getLastName()).append(",");
+        line.append(user.getEmail()).append(",");
+        line.append(user.getPassword()).append(",");
+        line.append(user.getPhoneNumber()).append(",");
+        line.append(user.getAddress()).append(",");
+        line.append(user.getCity()).append(",");
+        line.append(user.getProvince()).append(",");
+        line.append(user.getRole()).append(",");
+        line.append(user.getTaxID()).append(",");
+        line.append(user.getBirthDate()).append(",");
+
+        if (user.getRole().equalsIgnoreCase("doctor")) {
+            line.append(user.getUniversity()).append(",");
+            line.append(user.getRegisterNumber()).append(",");
+            line.append(user.getGraduationYear()).append(",");
+            line.append(user.getQualification());
+        } else {
+
+            line.append("").append("").append("").append("").append(user.getAge());
+        }
+
+        FileManager.saveUser(line.toString());
+
+// Test
         System.out.println("\nSuccessfully registered user!");
         System.out.println("Nome: " + user.getName());
         System.out.println("Ruolo: " + user.getRole());
