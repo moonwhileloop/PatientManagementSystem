@@ -153,8 +153,8 @@ public class UserService {
 
 // Test
         System.out.println("\nSuccessfully registered user!");
-        System.out.println("Nome: " + user.getName());
-        System.out.println("Ruolo: " + user.getRole());
+        System.out.println("Name: " + user.getName());
+        System.out.println("Role: " + user.getRole());
 
         if (user.getRole().equalsIgnoreCase("patient")) {
             System.out.println("Age: " + user.getAge());
@@ -222,10 +222,67 @@ public class UserService {
             System.out.println("Login successful!");
             System.out.println("Welcome " + user.getName());
 
-            if (user.getRole().equalsIgnoreCase("doctor")) {
-                System.out.println("Redirecting to doctor dashboard...");
-            } else {
-                System.out.println("Redirecting to patient dashboard...");
+            boolean running = true;
+
+            while (running) {
+
+                if (user.getRole().equalsIgnoreCase("doctor")) {
+
+                    System.out.println("\n=== DOCTOR MENU ===");
+                    System.out.println("1. Read patient record");
+                    System.out.println("2. Write patient record");
+                    System.out.println("0. Logout");
+
+                    String choice = scanner.nextLine();
+
+                    switch (choice) {
+                        case "1":
+                            System.out.print("Enter patient taxID: ");
+                            String readID = scanner.nextLine();
+                            MedicalRecordService.readPatientRecord(readID);
+                            break;
+
+                        case "2":
+                            System.out.print("Enter patient taxID: ");
+                            String writeID = scanner.nextLine();
+
+                            System.out.print("Write note: ");
+                            String note = scanner.nextLine();
+
+                            MedicalRecordService.writePatientRecord(writeID, note);
+                            break;
+
+                        case "0":
+                            running = false;
+                            System.out.println("Logout...");
+                            break;
+
+                        default:
+                            System.out.println("Invalid choice.");
+                    }
+
+                } else {
+
+                    System.out.println("\n=== PATIENT MENU ===");
+                    System.out.println("1. Read my record");
+                    System.out.println("0. Logout");
+
+                    String choice = scanner.nextLine();
+
+                    switch (choice) {
+                        case "1":
+                            MedicalRecordService.readPatientRecord(user.getTaxID());
+                            break;
+
+                        case "0":
+                            running = false;
+                            System.out.println("Logout...");
+                            break;
+
+                        default:
+                            System.out.println("Invalid choice.");
+                    }
+                }
             }
 
         } else {
